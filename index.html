@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D 5.5e Character Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- ═══════════ CHARACTER HEADER ═══════════ -->
+  <header id="char-header">
+    <div class="header-field">
+      <label for="char-name">Character Name</label>
+      <input type="text" id="char-name" placeholder="Unnamed Hero" data-field="name">
+    </div>
+    <div class="header-field">
+      <label for="char-class">Class</label>
+      <input type="text" id="char-class" placeholder="Class" data-field="charClass">
+    </div>
+    <div class="header-field">
+      <label for="char-subclass">Subclass</label>
+      <input type="text" id="char-subclass" placeholder="Subclass" data-field="subclass">
+    </div>
+    <div class="header-field">
+      <label>Level</label>
+      <div class="level-control">
+        <button class="level-btn" id="level-down">&minus;</button>
+        <input type="number" id="char-level" min="1" max="20" value="1">
+        <button class="level-btn" id="level-up">+</button>
+      </div>
+    </div>
+    <div class="header-field">
+      <label for="char-race">Race</label>
+      <input type="text" id="char-race" placeholder="Race" data-field="race">
+    </div>
+    <div class="header-field">
+      <label for="char-background">Background</label>
+      <input type="text" id="char-background" placeholder="Background" data-field="background">
+    </div>
+    <div class="header-field">
+      <label for="char-alignment">Alignment</label>
+      <select id="char-alignment" data-field="alignment">
+        <option value="">&mdash;</option>
+        <option value="LG">Lawful Good</option>
+        <option value="NG">Neutral Good</option>
+        <option value="CG">Chaotic Good</option>
+        <option value="LN">Lawful Neutral</option>
+        <option value="N">True Neutral</option>
+        <option value="CN">Chaotic Neutral</option>
+        <option value="LE">Lawful Evil</option>
+        <option value="NE">Neutral Evil</option>
+        <option value="CE">Chaotic Evil</option>
+      </select>
+    </div>
+  </header>
+  <div style="display:flex;justify-content:center;gap:16px;margin-top:8px;align-items:center;">
+    <div style="text-align:center;">
+      <div id="prof-bonus-display">+2</div>
+      <div id="prof-bonus-label">Proficiency</div>
+    </div>
+    <div class="header-field" style="width:100px;">
+      <label for="char-xp">Experience</label>
+      <input type="number" id="char-xp" min="0" value="0" data-field="xp" style="background:var(--bg-input);border:1px solid var(--border);border-radius:var(--input-radius);color:var(--text);font-family:var(--font-body);font-size:0.9rem;padding:5px 8px;text-align:center;-moz-appearance:textfield;">
+    </div>
+  </div>
+
+  <!-- ═══════════ MAIN GRID ═══════════ -->
+  <div id="main-grid">
+
+    <!-- Ability Scores -->
+    <section id="ability-scores" class="panel">
+      <div class="panel-header">Ability Scores</div>
+      <div id="abilities-grid"></div>
+    </section>
+
+    <!-- Saving Throws -->
+    <section id="saving-throws" class="panel">
+      <div class="panel-header">Saving Throws</div>
+      <div id="saves-list"></div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills-panel" class="panel">
+      <div class="panel-header">Skills</div>
+      <div id="skills-list"></div>
+    </section>
+
+    <!-- Combat Stats -->
+    <section id="combat-panel" class="panel">
+      <div class="panel-header">
+        Combat
+        <div class="header-actions rest-buttons">
+          <button class="btn btn-small rest-btn short-rest" id="short-rest-btn" title="Short Rest">Short Rest</button>
+          <button class="btn btn-small rest-btn long-rest" id="long-rest-btn" title="Long Rest">Long Rest</button>
+        </div>
+      </div>
+
+      <!-- Conditions Bar -->
+      <div id="conditions-bar" class="conditions-bar"></div>
+      <div id="condition-effects" class="condition-effects"></div>
+
+      <div class="combat-grid">
+        <div class="combat-stat">
+          <label>AC</label>
+          <input type="number" id="combat-ac" data-field="ac">
+          <button class="btn btn-small" id="ac-auto" style="margin-top:4px;font-size:0.55rem;">Auto</button>
+        </div>
+        <div class="combat-stat">
+          <label>Initiative</label>
+          <input type="number" id="combat-init" data-field="initiative">
+          <button class="btn btn-small" id="init-auto" style="margin-top:4px;font-size:0.55rem;">Auto</button>
+        </div>
+        <div class="combat-stat">
+          <label>Speed</label>
+          <input type="number" id="combat-speed" data-field="speed">
+        </div>
+      </div>
+
+      <div class="hp-section">
+        <h3>Hit Points</h3>
+        <div class="hp-bar">
+          <div class="hp-buttons">
+            <button class="hp-btn damage" id="hp-minus" title="Damage">&minus;</button>
+          </div>
+          <input type="number" class="hp-current" id="hp-current">
+          <span class="hp-separator">/</span>
+          <input type="number" class="hp-max" id="hp-max" placeholder="Max">
+          <div class="hp-buttons">
+            <button class="hp-btn heal" id="hp-plus" title="Heal">+</button>
+          </div>
+        </div>
+        <div class="temp-hp-row">
+          <span>Temp HP</span>
+          <input type="number" id="temp-hp" min="0" value="0">
+        </div>
+        <div id="resistance-indicator" class="condition-indicator resist" style="display:none;margin-top:6px;"></div>
+      </div>
+
+      <div class="hit-dice-section">
+        <div class="panel-header" style="font-size:0.6rem;margin-bottom:8px;">
+          Hit Dice
+          <div class="header-actions">
+            <button class="btn btn-small" id="add-hit-die">+ Add</button>
+          </div>
+        </div>
+        <div id="hit-dice-list"></div>
+      </div>
+
+      <div>
+        <div class="panel-header" style="font-size:0.6rem;margin-bottom:8px;">Death Saves</div>
+        <div class="death-saves" id="death-saves"></div>
+      </div>
+
+      <!-- Class Resources -->
+      <div id="class-resources" class="class-resources" style="margin-top:12px;"></div>
+    </section>
+
+    <!-- Passive Stats -->
+    <section id="passives-panel" class="panel">
+      <div class="panel-header">Passive Senses</div>
+      <div id="passives-list"></div>
+    </section>
+
+    <!-- Attacks & Weapons -->
+    <section id="attacks-panel" class="panel">
+      <div class="panel-header">
+        Attacks &amp; Weapons
+        <div class="header-actions">
+          <button class="btn btn-small btn-gold" id="add-weapon">+ Add Weapon</button>
+        </div>
+      </div>
+      <div class="weapon-row weapon-labels">
+        <span>Name</span>
+        <span>Abil</span>
+        <span>Atk</span>
+        <span>Damage</span>
+        <span>Mod</span>
+        <span>Type</span>
+        <span></span>
+      </div>
+      <div id="weapons-list"></div>
+    </section>
+
+    <!-- Features & Traits -->
+    <section id="features-panel" class="panel">
+      <div class="panel-header">Features &amp; Traits</div>
+      <div class="features-tabs">
+        <button class="feature-tab active" data-tab="racial">Racial Traits</button>
+        <button class="feature-tab" data-tab="class">Class Features</button>
+        <button class="feature-tab" data-tab="feats">Feats</button>
+      </div>
+      <div class="feature-content active" data-content="racial">
+        <textarea class="feature-textarea" data-field="racialTraits" placeholder="Racial traits and abilities..."></textarea>
+      </div>
+      <div class="feature-content" data-content="class">
+        <textarea class="feature-textarea" data-field="classFeatures" placeholder="Class features and abilities..."></textarea>
+      </div>
+      <div class="feature-content" data-content="feats">
+        <textarea class="feature-textarea" data-field="feats" placeholder="Feats and special abilities..."></textarea>
+      </div>
+    </section>
+
+    <!-- Spells -->
+    <section id="spells-panel" class="panel">
+      <div class="panel-header">
+        Spellcasting
+        <div class="header-actions">
+          <button class="btn btn-small btn-gold" id="add-spell">+ Add Spell</button>
+        </div>
+      </div>
+      <div class="spell-header-row">
+        <div class="spell-stat">
+          <label>Ability</label>
+          <select id="spell-ability">
+            <option value="int">INT</option>
+            <option value="wis">WIS</option>
+            <option value="cha">CHA</option>
+          </select>
+        </div>
+        <div class="spell-stat">
+          <label>Save DC</label>
+          <span class="spell-stat-value" id="spell-dc">10</span>
+        </div>
+        <div class="spell-stat">
+          <label>Atk Bonus</label>
+          <span class="spell-stat-value" id="spell-atk">+0</span>
+        </div>
+      </div>
+      <div class="spell-slots-grid" id="spell-slots-grid"></div>
+      <div class="spell-row spell-list-header">
+        <span>P</span>
+        <span>Name</span>
+        <span>Lvl</span>
+        <span>School</span>
+        <span title="Concentration">C</span>
+        <span></span>
+        <span>Notes</span>
+        <span></span>
+      </div>
+      <div id="spells-list"></div>
+    </section>
+
+    <!-- Equipment & Currency -->
+    <section id="equipment-panel" class="panel">
+      <div class="panel-header">
+        Equipment &amp; Currency
+        <div class="header-actions">
+          <button class="btn btn-small btn-gold" id="add-equip">+ Add Item</button>
+        </div>
+      </div>
+      <div class="currency-row" id="currency-row"></div>
+      <div class="equip-labels">
+        <span>Item</span>
+        <span>Qty</span>
+        <span>Weight</span>
+        <span>Notes</span>
+        <span></span>
+      </div>
+      <div id="equip-list"></div>
+      <div class="carry-capacity" id="carry-capacity"></div>
+    </section>
+
+    <!-- Character Details -->
+    <section id="details-panel" class="panel">
+      <div class="panel-header">Character Details</div>
+      <div class="details-grid">
+        <div class="detail-field">
+          <label>Personality Traits</label>
+          <textarea data-field="personalityTraits" placeholder="Personality traits..."></textarea>
+        </div>
+        <div class="detail-field">
+          <label>Ideals</label>
+          <textarea data-field="ideals" placeholder="Ideals..."></textarea>
+        </div>
+        <div class="detail-field">
+          <label>Bonds</label>
+          <textarea data-field="bonds" placeholder="Bonds..."></textarea>
+        </div>
+        <div class="detail-field">
+          <label>Flaws</label>
+          <textarea data-field="flaws" placeholder="Flaws..."></textarea>
+        </div>
+        <div class="detail-field full-width">
+          <label>Appearance</label>
+          <textarea data-field="appearance" placeholder="Physical appearance..."></textarea>
+        </div>
+        <div class="detail-field full-width">
+          <button class="backstory-toggle" id="backstory-toggle">
+            <span class="arrow">&#9654;</span> Backstory
+          </button>
+          <div class="backstory-wrapper" id="backstory-wrapper">
+            <textarea data-field="backstory" placeholder="Character backstory..." style="min-height:120px;"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Utility Panel -->
+    <section id="utility-panel" class="panel">
+      <div class="panel-header">Character Management</div>
+      <div class="utility-buttons">
+        <button class="btn btn-gold" id="export-btn">Export JSON</button>
+        <button class="btn" id="import-btn">Import JSON</button>
+        <button class="btn btn-danger" id="new-char-btn">New Character</button>
+      </div>
+      <input type="file" id="import-input" accept=".json">
+    </section>
+
+  </div>
+</div>
+
+<!-- ═══════════ ROLL OVERLAY ═══════════ -->
+<div id="roll-overlay">
+  <div class="roll-overlay-label" id="roll-overlay-label"></div>
+  <div class="roll-overlay-result" id="roll-overlay-result"></div>
+  <div class="roll-overlay-subtitle" id="roll-overlay-subtitle"></div>
+</div>
+
+<!-- ═══════════ DICE ROLLER ═══════════ -->
+<div id="dice-roller">
+  <div class="dice-compact">
+    <button class="dice-toggle" id="dice-toggle" title="Toggle roll log">&#9654;</button>
+    <div class="dice-quick-buttons">
+      <button class="dice-btn" data-die="4">d4</button>
+      <button class="dice-btn" data-die="6">d6</button>
+      <button class="dice-btn" data-die="8">d8</button>
+      <button class="dice-btn" data-die="10">d10</button>
+      <button class="dice-btn" data-die="12">d12</button>
+      <button class="dice-btn d20-btn" data-die="20">d20</button>
+      <button class="dice-btn" data-die="100">d100</button>
+    </div>
+    <div class="advantage-toggle">
+      <button class="adv-btn active-normal" data-mode="normal">Normal</button>
+      <button class="adv-btn" data-mode="advantage">Adv</button>
+      <button class="adv-btn" data-mode="disadvantage">Dis</button>
+    </div>
+    <span class="last-roll-result" id="last-roll-result"></span>
+    <div class="dice-manual">
+      <input type="text" id="dice-manual-input" placeholder="2d8+5">
+      <button class="btn btn-small btn-gold" id="dice-manual-roll">Roll</button>
+    </div>
+  </div>
+  <div class="dice-expanded" id="dice-expanded">
+    <div class="roll-log" id="roll-log"></div>
+  </div>
+</div>
+
+<!-- ═══════════ SCRIPTS (load order matters) ═══════════ -->
+<script src="js/data/srd.js"></script>
+<script src="js/core/constants.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/core/state.js"></script>
+<script src="js/core/calculations.js"></script>
+<script src="js/core/dice.js"></script>
+<script src="js/systems/conditions.js"></script>
+<script src="js/systems/rest.js"></script>
+<script src="js/views/header.js"></script>
+<script src="js/views/abilities.js"></script>
+<script src="js/views/combat.js"></script>
+<script src="js/views/weapons.js"></script>
+<script src="js/views/features.js"></script>
+<script src="js/views/spells.js"></script>
+<script src="js/views/equipment.js"></script>
+<script src="js/views/details.js"></script>
+<script src="js/views/management.js"></script>
+<script src="js/views/dice-tray.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
