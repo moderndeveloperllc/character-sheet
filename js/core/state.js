@@ -64,7 +64,18 @@ function mergeCharacterData(parsed) {
   if (parsed.weapons) char.weapons = parsed.weapons.map(w => ({
     ability: 'str', proficient: true, manualOverride: !!(w.attackBonus || w.damageModifier), properties: [], ...w
   }));
-  if (parsed.spells) char.spells = parsed.spells;
+  if (parsed.spells) char.spells = parsed.spells.map(function(s) {
+    // Reconcile saved spells with SRD data (fixes stale concentration/school/level)
+    if (typeof SPELL_DATA !== 'undefined' && s.name) {
+      var match = Object.values(SPELL_DATA).find(function(sd) { return sd.name === s.name; });
+      if (match) {
+        s.concentration = match.concentration;
+        s.school = match.school;
+        s.level = match.level;
+      }
+    }
+    return s;
+  });
   if (parsed.equipment) char.equipment = parsed.equipment;
   if (!char.activeConditions) char.activeConditions = [];
   if (!char.classResources) char.classResources = [];

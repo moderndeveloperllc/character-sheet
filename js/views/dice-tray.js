@@ -50,12 +50,21 @@ function setupDiceTray() {
     });
   });
 
-  document.querySelectorAll('.adv-btn').forEach(btn => {
+  document.querySelectorAll('.adv-btn[data-mode]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.adv-btn').forEach(b => b.className = 'adv-btn');
+      document.querySelectorAll('.adv-btn[data-mode]').forEach(b => b.className = 'adv-btn');
       advantageMode = btn.dataset.mode;
       const classMap = { normal: 'active-normal', advantage: 'active-adv', disadvantage: 'active-dis' };
       btn.classList.add(classMap[advantageMode]);
+    });
+  });
+
+  // Crit rule toggle
+  document.querySelectorAll('.adv-btn[data-crit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.adv-btn[data-crit]').forEach(b => b.className = 'adv-btn');
+      critRule = btn.dataset.crit;
+      btn.classList.add('active-normal');
     });
   });
 

@@ -45,11 +45,22 @@ function rollCheck(modifier, label, options) {
     detail += ' +' + cm.count + 'd' + cm.sides + '(' + bonusRolls.join(',') + ') ' + cm.source;
   });
 
-  addToLog({ label: label + modeLabel, detail: detail, total: total, isCrit: chosen === 20, isFumble: chosen === 1 });
+  const wasCrit = chosen === 20;
+  if (isAttack) lastAttackWasCrit = wasCrit;
+
+  addToLog({ label: label + modeLabel, detail: detail, total: total, isCrit: wasCrit, isFumble: chosen === 1 });
   return total;
 }
 
-function rollWeaponDamage(weapon, label) {
+// Crit tracking: last attack crit status, and crit rule setting
+var lastAttackWasCrit = false;
+// 'double-dice' = RAW (roll twice the dice), 'double-total' = house rule (double the rolled total)
+var critRule = 'double-dice';
+
+function rollWeaponDamage(weapon, label, forceCrit) {
+  const isCrit = forceCrit || lastAttackWasCrit;
+  lastAttackWasCrit = false; // consume the crit
+
   const diceExpr = weapon.damageDice || '1d4';
   const parsed = parseDiceExpr(diceExpr);
   if (!parsed) return;
@@ -58,20 +69,41 @@ function rollWeaponDamage(weapon, label) {
   const condBonus = getConditionDamageBonus(weapon);
   const totalMod = baseMod + condBonus.flat;
 
-  const results = rollDice(parsed.count, parsed.sides);
-  const diceTotal = results.reduce((a, b) => a + b, 0);
-  let total = diceTotal + totalMod;
-  let detail = parsed.count + 'd' + parsed.sides + '(' + results.join(', ') + ') ' + formatMod(totalMod);
+  let results, diceTotal, detail;
+  const diceCount = parsed.count;
+  const diceSides = parsed.sides;
 
-  // Extra dice from conditions (e.g., Hex 1d6)
+  if (isCrit && critRule === 'double-dice') {
+    // RAW: roll double the number of dice
+    results = rollDice(diceCount * 2, diceSides);
+    diceTotal = results.reduce((a, b) => a + b, 0);
+    detail = (diceCount * 2) + 'd' + diceSides + '(' + results.join(', ') + ') ' + formatMod(totalMod) + ' [CRIT]';
+  } else {
+    results = rollDice(diceCount, diceSides);
+    diceTotal = results.reduce((a, b) => a + b, 0);
+    if (isCrit && critRule === 'double-total') {
+      // House rule: double the dice total (not the modifier)
+      detail = diceCount + 'd' + diceSides + '(' + results.join(', ') + ')x2=' + (diceTotal * 2) + ' ' + formatMod(totalMod) + ' [CRIT]';
+      diceTotal = diceTotal * 2;
+    } else {
+      detail = diceCount + 'd' + diceSides + '(' + results.join(', ') + ') ' + formatMod(totalMod);
+    }
+  }
+
+  let total = diceTotal + totalMod;
+
+  // Extra dice from conditions (e.g., Hex 1d6) — also doubled on crit per RAW
   condBonus.extraDice.forEach(ed => {
-    const extraRolls = rollDice(ed.count, ed.sides);
-    const extraTotal = extraRolls.reduce((a, b) => a + b, 0);
+    const edCount = isCrit && critRule === 'double-dice' ? ed.count * 2 : ed.count;
+    const extraRolls = rollDice(edCount, ed.sides);
+    let extraTotal = extraRolls.reduce((a, b) => a + b, 0);
+    if (isCrit && critRule === 'double-total') extraTotal = extraTotal * 2;
     total += extraTotal;
-    detail += ' +' + ed.count + 'd' + ed.sides + '(' + extraRolls.join(',') + ') ' + ed.source;
+    detail += ' +' + edCount + 'd' + ed.sides + '(' + extraRolls.join(',') + ') ' + ed.source;
   });
 
-  addToLog({ label: label, detail: detail, total: total, isCrit: false, isFumble: false });
+  const critLabel = isCrit ? ' (CRIT)' : '';
+  addToLog({ label: label + critLabel, detail: detail, total: total, isCrit: isCrit });
   return total;
 }
 
