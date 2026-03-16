@@ -87,6 +87,11 @@ function renderSpells() {
         spell.level = sd.level;
         spell.school = sd.school;
         spell.concentration = sd.concentration;
+        spell.damage = sd.damage || '';
+        spell.damageType = sd.damageType || '';
+        spell.attack = sd.attack || '';
+        spell.save = sd.save || '';
+        spell.missiles = sd.missiles || 0;
         save(); renderSpells();
       },
     });
@@ -117,14 +122,29 @@ function renderSpells() {
     const concEl = el('span', { className: 'conc-indicator' + (spell.concentration ? ' active' : ''), textContent: 'C', title: 'Toggle concentration' });
     concEl.addEventListener('click', () => { spell.concentration = !spell.concentration; save(); renderSpells(); });
 
-    const notesInput = el('input', { type: 'text', value: spell.notes, placeholder: 'Notes' });
-    notesInput.addEventListener('change', () => { spell.notes = notesInput.value; save(); });
+    const dmgInput = el('input', { type: 'text', value: spell.damage || '', placeholder: '\u2014', title: 'Damage dice' });
+    dmgInput.addEventListener('change', () => { spell.damage = dmgInput.value; save(); });
+
+    const actionChildren = [];
+    if (spell.attack) {
+      const atkBtn = el('button', { className: 'roll-atk-btn', textContent: 'Atk', title: 'Roll spell attack' });
+      atkBtn.addEventListener('click', () => rollSpellAttack(spell));
+      actionChildren.push(atkBtn);
+    }
+    if (spell.damage) {
+      const dmgBtn = el('button', { className: 'roll-dmg-btn', textContent: 'Dmg', title: 'Roll damage' });
+      dmgBtn.addEventListener('click', () => rollSpellDamage(spell));
+      actionChildren.push(dmgBtn);
+    }
 
     const removeBtn = el('button', { className: 'remove-btn', textContent: '\u00d7' });
     removeBtn.addEventListener('click', () => { char.spells.splice(i, 1); save(); renderSpells(); });
+    actionChildren.push(removeBtn);
+
+    const actionDiv = el('div', { style: 'display:flex;gap:3px;align-items:center' }, actionChildren);
 
     list.appendChild(el('div', { className: 'spell-row' }, [
-      prepCb, nameCombo, levelSelect, schoolSelect, concEl, el('span'), notesInput, removeBtn
+      prepCb, nameCombo, levelSelect, schoolSelect, concEl, dmgInput, actionDiv
     ]));
   });
 }

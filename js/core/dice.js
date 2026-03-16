@@ -107,6 +107,100 @@ function rollWeaponDamage(weapon, label, forceCrit) {
   return total;
 }
 
+function getCantripDiceCount(baseDice) {
+  var parsed = parseDiceExpr(baseDice);
+  if (!parsed) return baseDice;
+  var scale = 1;
+  if (char.level >= 17) scale = 4;
+  else if (char.level >= 11) scale = 3;
+  else if (char.level >= 5) scale = 2;
+  return (parsed.count * scale) + 'd' + parsed.sides + (parsed.modifier ? (parsed.modifier > 0 ? '+' : '') + parsed.modifier : '');
+}
+
+function useSpellSlot(spell) {
+  if (spell.level < 1) return;
+  var slot = char.spellSlots[spell.level];
+  if (slot && slot.used < slot.max) {
+    slot.used++;
+    save();
+    renderSpellSlots();
+  }
+}
+
+function rollSpellAttack(spell) {
+  useSpellSlot(spell);
+  rollCheck(getSpellAttack(), (spell.name || 'Spell') + ' Atk', { isAttack: true });
+}
+
+function rollSpellDamage(spell) {
+  var diceExpr = spell.damage;
+  if (!diceExpr) return;
+  var label = (spell.name || 'Spell') + ' Dmg';
+  var isCantrip = spell.level === 0;
+
+  // Cantrip scaling
+  if (isCantrip) diceExpr = getCantripDiceCount(diceExpr);
+
+  // Magic Missile special handling: roll each missile separately
+  if (spell.missiles) {
+    var missileCount = spell.missiles;
+    var missileResults = [];
+    var grandTotal = 0;
+    for (var m = 0; m < missileCount; m++) {
+      var mp = parseDiceExpr(diceExpr);
+      if (!mp) return;
+      var rolls = rollDice(mp.count, mp.sides);
+      var mTotal = rolls.reduce(function(a, b) { return a + b; }, 0) + mp.modifier;
+      missileResults.push(mTotal);
+      grandTotal += mTotal;
+    }
+    addToLog({
+      label: label,
+      detail: missileCount + ' missiles: ' + missileResults.join(' + ') + ' (' + diceExpr + ' each)',
+      total: grandTotal
+    });
+    // Consume slot for non-cantrip if not already consumed via ATK
+    if (!isCantrip && !spell.attack) useSpellSlot(spell);
+    return grandTotal;
+  }
+
+  var parsed = parseDiceExpr(diceExpr);
+  if (!parsed) return;
+
+  var isCrit = lastAttackWasCrit;
+  lastAttackWasCrit = false;
+
+  var diceCount = parsed.count;
+  var diceSides = parsed.sides;
+  var baseMod = parsed.modifier;
+  var results, diceTotal, detail;
+
+  if (isCrit && critRule === 'double-dice') {
+    results = rollDice(diceCount * 2, diceSides);
+    diceTotal = results.reduce(function(a, b) { return a + b; }, 0);
+    detail = (diceCount * 2) + 'd' + diceSides + '(' + results.join(', ') + ') ' + formatMod(baseMod) + ' [CRIT]';
+  } else {
+    results = rollDice(diceCount, diceSides);
+    diceTotal = results.reduce(function(a, b) { return a + b; }, 0);
+    if (isCrit && critRule === 'double-total') {
+      detail = diceCount + 'd' + diceSides + '(' + results.join(', ') + ')x2=' + (diceTotal * 2) + ' ' + formatMod(baseMod) + ' [CRIT]';
+      diceTotal = diceTotal * 2;
+    } else {
+      detail = diceCount + 'd' + diceSides + '(' + results.join(', ') + ')' + (baseMod ? ' ' + formatMod(baseMod) : '');
+    }
+  }
+
+  var total = diceTotal + baseMod;
+  if (spell.damageType) detail += ' ' + spell.damageType.toLowerCase();
+
+  var critLabel = isCrit ? ' (CRIT)' : '';
+  addToLog({ label: label + critLabel, detail: detail, total: total, isCrit: isCrit });
+
+  // Consume slot for save-based spells (no attack roll)
+  if (!isCantrip && !spell.attack) useSpellSlot(spell);
+  return total;
+}
+
 function parseDiceExpr(expr) {
   if (!expr) return null;
   const match = String(expr).trim().match(/^(\d+)?d(\d+)\s*([+-]\s*\d+)?$/i);

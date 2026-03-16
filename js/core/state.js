@@ -72,8 +72,18 @@ function mergeCharacterData(parsed) {
         s.concentration = match.concentration;
         s.school = match.school;
         s.level = match.level;
+        if (match.damage && !s.damage) s.damage = match.damage;
+        if (match.damageType && !s.damageType) s.damageType = match.damageType;
+        if (match.attack) s.attack = match.attack;
+        if (match.save) s.save = match.save;
+        if (match.missiles) s.missiles = match.missiles;
       }
     }
+    if (!s.damage) s.damage = '';
+    if (!s.damageType) s.damageType = '';
+    if (!s.attack) s.attack = '';
+    if (!s.save) s.save = '';
+    if (!s.missiles) s.missiles = 0;
     return s;
   });
   if (parsed.equipment) char.equipment = parsed.equipment;
