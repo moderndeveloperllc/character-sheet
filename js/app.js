@@ -78,7 +78,12 @@ function setupEvents() {
   document.getElementById('combat-ac').addEventListener('change', (e) => { char.ac = parseInt(e.target.value) || 10; char.acOverride = true; save(); });
   document.getElementById('ac-auto').addEventListener('click', () => { char.acOverride = false; char.ac = getBaseAC(); document.getElementById('combat-ac').value = char.ac; save(); });
   document.getElementById('combat-init').addEventListener('change', (e) => { char.initiative = parseInt(e.target.value) || 0; char.initiativeOverride = true; save(); });
-  document.getElementById('init-auto').addEventListener('click', () => { char.initiativeOverride = false; char.initiative = getMod(char.abilities.dex); document.getElementById('combat-init').value = char.initiative; save(); });
+  document.getElementById('init-auto').addEventListener('click', () => {
+    var initMod = getMod(char.abilities.dex);
+    var result = rollCheck(initMod, 'Initiative');
+    char.initiative = result; char.initiativeOverride = true;
+    document.getElementById('combat-init').value = result; save();
+  });
   document.getElementById('combat-speed').addEventListener('change', (e) => { char.speed = parseInt(e.target.value) || 30; save(); });
 
   // HP
