@@ -125,7 +125,7 @@ function renderSpells() {
     concEl.addEventListener('click', () => { spell.concentration = !spell.concentration; save(); renderSpells(); });
 
     const dmgInput = el('input', { type: 'text', name: 'spell-dmg-' + i, value: spell.damage || '', placeholder: '\u2014', title: 'Damage dice' });
-    dmgInput.addEventListener('change', () => { spell.damage = dmgInput.value; save(); });
+    dmgInput.addEventListener('change', () => { spell.damage = dmgInput.value; save(); renderSpells(); });
 
     const actionChildren = [];
     if (spell.attack) {

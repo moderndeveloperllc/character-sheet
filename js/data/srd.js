@@ -748,7 +748,7 @@ const WEAPON_DATA = {
 // ---------------------------------------------------------------------------
 const SPELL_DATA = {
   // ---- Cantrips (Level 0) ----
-  // attack: 'ranged'|'melee' = spell attack roll; save: ability = save-based; damage/damageType = dice & type
+  // attack: 'ranged'|'melee' = spell attack roll; save: ability = save-based; damage/damageType = dice & type; missiles: number = individual missile rolls
   acidSplash: { name: 'Acid Splash', level: 0, school: 'Conjuration', classes: ['sorcerer', 'wizard'], concentration: false, save: 'dex', damage: '1d6', damageType: 'Acid' },
   bladeWard: { name: 'Blade Ward', level: 0, school: 'Abjuration', classes: ['bard', 'sorcerer', 'warlock', 'wizard'], concentration: false },
   chillTouch: { name: 'Chill Touch', level: 0, school: 'Necromancy', classes: ['sorcerer', 'warlock', 'wizard'], concentration: false, attack: 'ranged', damage: '1d8', damageType: 'Necrotic' },

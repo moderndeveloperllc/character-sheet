@@ -153,8 +153,11 @@ function castSpell(spell) {
   addToLog({ label: (spell.name || 'Spell') + ' Cast', detail: spell.level > 0 ? 'Level ' + spell.level : 'Cantrip', total: '\u2714' });
 }
 
+var lastSpellSlotConsumed = false;
+
 function rollSpellAttack(spell) {
   useSpellSlot(spell);
+  lastSpellSlotConsumed = spell.level >= 1;
   rollCheck(getSpellAttack(), (spell.name || 'Spell') + ' Atk', { isAttack: true });
 }
 
@@ -187,8 +190,9 @@ function rollSpellDamage(spell) {
       total: grandTotal,
       damageType: spell.damageType || ''
     });
-    // Consume slot for non-cantrip if not already consumed via ATK
-    if (!isCantrip && !spell.attack) useSpellSlot(spell);
+    // Consume slot for non-cantrip if not already consumed via Atk button
+    if (!isCantrip && !lastSpellSlotConsumed) useSpellSlot(spell);
+    lastSpellSlotConsumed = false;
     return grandTotal;
   }
 
@@ -224,8 +228,9 @@ function rollSpellDamage(spell) {
   var critLabel = isCrit ? ' (CRIT)' : '';
   addToLog({ label: label + critLabel, detail: detail, total: total, isCrit: isCrit, damageType: spell.damageType || '' });
 
-  // Consume slot for save-based spells (no attack roll)
-  if (!isCantrip && !spell.attack) useSpellSlot(spell);
+  // Consume slot if not already consumed via Atk button
+  if (!isCantrip && !lastSpellSlotConsumed) useSpellSlot(spell);
+  lastSpellSlotConsumed = false;
   return total;
 }
 
@@ -308,7 +313,7 @@ function showRollOverlay(entry) {
   } else {
     overlayType = 'normal-overlay';
     subtitle.textContent = entry.damageType || '';
-    duration = 4000;
+    duration = entry.damageType ? 4000 : 900;
     // Apply damage type color to the result number
     var dmgColor = entry.damageType ? getDamageTypeColor(entry.damageType) : null;
     if (dmgColor) {
