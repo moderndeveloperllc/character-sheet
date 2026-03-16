@@ -785,7 +785,7 @@ const SPELL_DATA = {
   bless: { name: 'Bless', level: 1, school: 'Enchantment', classes: ['cleric', 'paladin'], concentration: true },
   burningHands: { name: 'Burning Hands', level: 1, school: 'Evocation', classes: ['sorcerer', 'wizard'], concentration: false, save: 'dex', damage: '3d6', damageType: 'Fire' },
   charmPerson: { name: 'Charm Person', level: 1, school: 'Enchantment', classes: ['bard', 'druid', 'sorcerer', 'warlock', 'wizard'], concentration: false },
-  chromaticOrb: { name: 'Chromatic Orb', level: 1, school: 'Evocation', classes: ['sorcerer', 'wizard'], concentration: false, attack: 'ranged', damage: '3d8', damageType: 'Acid' },
+  chromaticOrb: { name: 'Chromatic Orb', level: 1, school: 'Evocation', classes: ['sorcerer', 'wizard'], concentration: false, attack: 'ranged', damage: '3d8', damageType: '' },
   colorSpray: { name: 'Color Spray', level: 1, school: 'Illusion', classes: ['sorcerer', 'wizard'], concentration: false },
   command: { name: 'Command', level: 1, school: 'Enchantment', classes: ['cleric', 'paladin'], concentration: false },
   compelledDuel: { name: 'Compelled Duel', level: 1, school: 'Enchantment', classes: ['paladin'], concentration: true },

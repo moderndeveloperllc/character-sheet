@@ -695,6 +695,15 @@ select option {
   transform: scale(0.95);
 }
 
+.cast-btn {
+  color: var(--text-dim);
+  border-style: dashed;
+}
+
+.cast-btn:hover {
+  color: var(--gold);
+}
+
 .auto-calculated {
   color: var(--gold);
   background: var(--bg-panel-alt);
@@ -847,14 +856,14 @@ select option {
 
 .slot-pips {
   display: flex;
-  gap: 3px;
+  gap: 2px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .slot-pip {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: 2px solid var(--blue);
   background: var(--bg-input);
@@ -908,7 +917,7 @@ select option {
 
 .spell-row {
   display: grid;
-  grid-template-columns: 24px 2fr 40px 90px 24px 60px auto;
+  grid-template-columns: 24px 2fr 40px 90px 24px 60px 110px;
   gap: 6px;
   align-items: center;
   padding: 3px 4px;
@@ -1451,6 +1460,43 @@ select option {
   box-shadow: 0 0 6px var(--gold-glow);
 }
 
+.resource-pool {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.resource-pool-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--input-radius);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  width: 48px;
+  padding: 2px 4px;
+  -moz-appearance: textfield;
+}
+
+.resource-pool-input::-webkit-inner-spin-button,
+.resource-pool-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.resource-pool-input:focus {
+  outline: none;
+  border-color: var(--gold-dim);
+  box-shadow: 0 0 0 1px var(--gold-glow);
+}
+
+.resource-pool-max {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
 /* ───────────────────────────────────────────
    20. Rest Buttons
    ─────────────────────────────────────────── */
@@ -1895,6 +1941,11 @@ select option {
 #roll-overlay.normal-overlay .roll-overlay-label {
   color: var(--gold);
   animation: subtitleFadeIn 0.25s ease both;
+}
+
+#roll-overlay.normal-overlay .roll-overlay-subtitle {
+  color: var(--text-dim);
+  animation: subtitleFadeIn 0.3s 0.1s ease both;
 }
 
 /* --- Overlay elements --- */

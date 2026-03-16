@@ -148,6 +148,11 @@ function useSpellSlot(spell) {
   }
 }
 
+function castSpell(spell) {
+  useSpellSlot(spell);
+  addToLog({ label: (spell.name || 'Spell') + ' Cast', detail: spell.level > 0 ? 'Level ' + spell.level : 'Cantrip', total: '\u2714', isCrit: false, isFumble: false });
+}
+
 function rollSpellAttack(spell) {
   useSpellSlot(spell);
   rollCheck(getSpellAttack(), (spell.name || 'Spell') + ' Atk', { isAttack: true });
@@ -303,7 +308,7 @@ function showRollOverlay(entry) {
   } else {
     overlayType = 'normal-overlay';
     subtitle.textContent = entry.damageType || '';
-    duration = 900;
+    duration = 4000;
     // Apply damage type color to the result number
     var dmgColor = entry.damageType ? getDamageTypeColor(entry.damageType) : null;
     if (dmgColor) {

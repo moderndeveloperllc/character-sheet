@@ -10,7 +10,7 @@ function renderAbilities() {
 
     const scoreInput = el('input', {
       type: 'number', className: 'ability-score-input',
-      value: String(score), min: '1', max: '30'
+      name: 'ability-' + a, value: String(score), min: '1', max: '30'
     });
     scoreInput.addEventListener('change', () => {
       char.abilities[a] = parseInt(scoreInput.value) || 10;

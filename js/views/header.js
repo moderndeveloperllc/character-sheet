@@ -8,14 +8,16 @@ function setupHeaderCombos() {
   const classEl = document.getElementById('char-class');
   const classCombo = createComboBox({
     options: Object.values(CLASS_DATA).map(c => ({ value: c.name.toLowerCase(), label: c.name })),
-    value: char.charClass, placeholder: 'Class',
+    value: char.charClass, placeholder: 'Class', name: 'charClass',
     onChange: (val) => { char.charClass = val; save(); },
     onSelect: (val, o) => {
       char.charClass = o.label;
       applyClassDefaults(val);
       const data = CLASS_DATA[val];
+      char.subclass = '';
       if (data && subclassCombo) {
         subclassCombo.setOptions(data.subclasses.map(s => ({ value: s, label: s })));
+        subclassCombo.setValue('');
       }
     }
   });
@@ -26,7 +28,7 @@ function setupHeaderCombos() {
   const currentClassData = CLASS_DATA[char.charClass.toLowerCase()];
   const subOpts = currentClassData ? currentClassData.subclasses.map(s => ({ value: s, label: s })) : [];
   subclassCombo = createComboBox({
-    options: subOpts, value: char.subclass, placeholder: 'Subclass',
+    options: subOpts, value: char.subclass, placeholder: 'Subclass', name: 'subclass',
     onChange: (val) => { char.subclass = val; save(); },
     onSelect: (val) => { char.subclass = val; save(); }
   });
@@ -36,7 +38,7 @@ function setupHeaderCombos() {
   const raceEl = document.getElementById('char-race');
   const raceCombo = createComboBox({
     options: Object.values(RACE_DATA).map(r => ({ value: r.name.toLowerCase(), label: r.name })),
-    value: char.race, placeholder: 'Race',
+    value: char.race, placeholder: 'Race', name: 'race',
     onChange: (val) => { char.race = val; save(); },
     onSelect: (val, o) => { char.race = o.label; applyRaceDefaults(val); }
   });
@@ -46,7 +48,7 @@ function setupHeaderCombos() {
   const bgEl = document.getElementById('char-background');
   const bgCombo = createComboBox({
     options: Object.values(BACKGROUND_DATA).map(b => ({ value: b.name.toLowerCase(), label: b.name })),
-    value: char.background, placeholder: 'Background',
+    value: char.background, placeholder: 'Background', name: 'background',
     onChange: (val) => { char.background = val; save(); },
     onSelect: (val, o) => { char.background = o.label; applyBackgroundDefaults(val); }
   });

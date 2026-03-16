@@ -117,8 +117,8 @@
   #ability-scores { grid-column: 1 / -1; }
   #skills-panel { grid-column: 1 / -1; grid-row: auto; }
   #combat-panel { grid-column: 1 / -1; grid-row: auto; }
-  #saving-throws { grid-column: 1 / 2; }
-  #passives-panel { grid-column: 2 / 3; }
+  #saving-throws { grid-column: 1 / 2; grid-row: 2; }
+  #passives-panel { grid-column: 2 / 3; grid-row: 2; }
   #attacks-panel { grid-column: 1 / -1; }
   #features-panel { grid-column: 1 / -1; }
   #spells-panel { grid-column: 1 / -1; }

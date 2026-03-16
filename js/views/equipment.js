@@ -5,10 +5,10 @@ function renderCurrency() {
   const row = document.getElementById('currency-row');
   clearChildren(row);
   CURRENCIES.forEach(c => {
-    const input = el('input', { type: 'number', value: String(char.currency[c.key]), min: '0' });
+    const input = el('input', { type: 'number', id: 'currency-' + c.key, name: 'currency-' + c.key, value: String(char.currency[c.key]), min: '0' });
     input.addEventListener('change', () => { char.currency[c.key] = parseInt(input.value) || 0; save(); });
     row.appendChild(el('div', { className: 'currency-field' }, [
-      el('label', { textContent: c.label }), input
+      el('label', { for: 'currency-' + c.key, textContent: c.label }), input
     ]));
   });
 }
@@ -17,10 +17,10 @@ function renderEquipment() {
   const list = document.getElementById('equip-list');
   clearChildren(list);
   char.equipment.forEach((item, i) => {
-    const nameInput = el('input', { type: 'text', value: item.name, placeholder: 'Item name' });
-    const qtyInput = el('input', { type: 'number', value: String(item.quantity), min: '0' });
-    const weightInput = el('input', { type: 'number', value: String(item.weight), min: '0', step: '0.1' });
-    const notesInput = el('input', { type: 'text', value: item.notes, placeholder: 'Notes' });
+    const nameInput = el('input', { type: 'text', name: 'equip-name-' + i, value: item.name, placeholder: 'Item name' });
+    const qtyInput = el('input', { type: 'number', name: 'equip-qty-' + i, value: String(item.quantity), min: '0' });
+    const weightInput = el('input', { type: 'number', name: 'equip-weight-' + i, value: String(item.weight), min: '0', step: '0.1' });
+    const notesInput = el('input', { type: 'text', name: 'equip-notes-' + i, value: item.notes, placeholder: 'Notes' });
 
     [nameInput, qtyInput, weightInput, notesInput].forEach(inp => {
       inp.addEventListener('change', () => {

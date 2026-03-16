@@ -8,7 +8,7 @@ function renderSaves() {
   clearChildren(list);
   ABILITIES.forEach(a => {
     const bonus = getSaveBonus(a);
-    const cb = el('input', { type: 'checkbox', className: 'custom-check' });
+    const cb = el('input', { type: 'checkbox', className: 'custom-check', name: 'save-prof-' + a, title: 'Proficient' });
     cb.checked = char.saveProficiencies[a];
     cb.addEventListener('change', () => { char.saveProficiencies[a] = cb.checked; save(); updateCalculated(); });
     cb.addEventListener('click', (e) => e.stopPropagation());
@@ -28,13 +28,18 @@ function renderSkills() {
   clearChildren(list);
   SKILLS.forEach(skill => {
     const bonus = getSkillBonus(skill);
-    const profCb = el('input', { type: 'checkbox', className: 'custom-check', title: 'Proficient' });
+    const profCb = el('input', { type: 'checkbox', className: 'custom-check', name: 'skill-prof-' + skill.key, title: 'Proficient' });
     profCb.checked = char.skillProficiencies[skill.key];
-    profCb.addEventListener('change', () => { char.skillProficiencies[skill.key] = profCb.checked; save(); updateCalculated(); });
+    profCb.addEventListener('change', () => {
+      char.skillProficiencies[skill.key] = profCb.checked;
+      if (!profCb.checked) { char.skillExpertise[skill.key] = false; }
+      save(); updateCalculated();
+    });
     profCb.addEventListener('click', (e) => e.stopPropagation());
 
-    const expertCb = el('input', { type: 'checkbox', className: 'custom-check expertise-check', title: 'Expertise' });
+    const expertCb = el('input', { type: 'checkbox', className: 'custom-check expertise-check', name: 'skill-expert-' + skill.key, title: 'Expertise' });
     expertCb.checked = char.skillExpertise[skill.key];
+    expertCb.disabled = !char.skillProficiencies[skill.key];
     expertCb.addEventListener('change', () => { char.skillExpertise[skill.key] = expertCb.checked; save(); updateCalculated(); });
     expertCb.addEventListener('click', (e) => e.stopPropagation());
 
@@ -69,6 +74,7 @@ function renderHitDice() {
   clearChildren(list);
   char.hitDice.forEach((hd, i) => {
     const typeSelect = document.createElement('select');
+    typeSelect.name = 'hd-type-' + i;
     [6, 8, 10, 12].forEach(d => {
       const opt = document.createElement('option');
       opt.value = String(d); opt.textContent = 'd' + d;
@@ -78,10 +84,10 @@ function renderHitDice() {
     typeSelect.addEventListener('change', () => { hd.type = parseInt(typeSelect.value); save(); });
 
     const remaining = hd.total - hd.used;
-    const remInput = el('input', { type: 'number', value: String(remaining), min: '0', max: String(hd.total) });
+    const remInput = el('input', { type: 'number', name: 'hd-remaining-' + i, value: String(remaining), min: '0', max: String(hd.total) });
     remInput.addEventListener('change', () => { hd.used = Math.max(0, hd.total - (parseInt(remInput.value) || 0)); save(); renderHitDice(); });
 
-    const totalInput = el('input', { type: 'number', value: String(hd.total), min: '0' });
+    const totalInput = el('input', { type: 'number', name: 'hd-total-' + i, value: String(hd.total), min: '0' });
     totalInput.addEventListener('change', () => { hd.total = parseInt(totalInput.value) || 0; hd.used = Math.min(hd.used, hd.total); save(); renderHitDice(); });
 
     const useBtn = el('button', { className: 'hd-use-btn', textContent: 'Use', title: 'Use hit die' });
@@ -158,16 +164,33 @@ function renderClassResources() {
 
   char.classResources.forEach((r, ri) => {
     const max = getResourceMax(r);
-    const pipsDiv = el('div', { className: 'resource-pips' });
-    for (let i = 0; i < max; i++) {
-      const pip = el('button', { className: 'slot-pip' + (i < r.current ? ' filled' : '') });
-      const idx = i;
-      pip.addEventListener('click', () => {
-        if (idx < r.current) r.current = idx;
-        else r.current = idx + 1;
-        save(); renderClassResources();
+    // Clamp current to max in case level changed
+    if (r.current > max) r.current = max;
+
+    let usageEl;
+    if (max > 10) {
+      // Pool resource (e.g., Lay on Hands): numeric counter
+      const input = el('input', { type: 'number', name: 'resource-' + ri, className: 'resource-pool-input', value: String(r.current), min: '0', max: String(max) });
+      input.addEventListener('change', () => {
+        r.current = Math.max(0, Math.min(max, parseInt(input.value) || 0));
+        input.value = r.current;
+        save();
       });
-      pipsDiv.appendChild(pip);
+      const maxLabel = el('span', { className: 'resource-pool-max', textContent: '/ ' + max });
+      usageEl = el('div', { className: 'resource-pool' }, [input, maxLabel]);
+    } else {
+      // Discrete resource (e.g., Rage, Arcane Recovery): pips
+      usageEl = el('div', { className: 'resource-pips' });
+      for (let i = 0; i < max; i++) {
+        const pip = el('button', { className: 'slot-pip' + (i < r.current ? ' filled' : '') });
+        const idx = i;
+        pip.addEventListener('click', () => {
+          if (idx < r.current) r.current = idx;
+          else r.current = idx + 1;
+          save(); renderClassResources();
+        });
+        usageEl.appendChild(pip);
+      }
     }
 
     const restLabel = el('span', { className: 'resource-rest-label', textContent: r.restoreOn === 'short' ? '(SR)' : '(LR)' });
@@ -176,7 +199,7 @@ function renderClassResources() {
         document.createTextNode(r.name + ' '),
         restLabel
       ]),
-      pipsDiv
+      usageEl
     ]);
     container.appendChild(tracker);
   });
