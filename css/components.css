@@ -696,12 +696,35 @@ select option {
 }
 
 .cast-btn {
+  background: var(--bg-panel-alt);
+  border: 1px dashed var(--border);
+  border-radius: var(--input-radius);
   color: var(--text-dim);
-  border-style: dashed;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
 }
 
 .cast-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--gold-dim);
   color: var(--gold);
+}
+
+.cast-btn:active {
+  transform: scale(0.95);
+}
+
+.spell-actions {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .auto-calculated {

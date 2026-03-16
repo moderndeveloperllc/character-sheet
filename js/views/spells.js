@@ -139,7 +139,7 @@ function renderSpells() {
       actionChildren.push(dmgBtn);
     }
     if (!spell.attack && !spell.damage) {
-      const castBtn = el('button', { className: 'roll-atk-btn cast-btn', textContent: 'Cast', title: 'Cast spell (use slot)' });
+      const castBtn = el('button', { className: 'cast-btn', textContent: 'Cast', title: 'Cast spell (use slot)' });
       castBtn.addEventListener('click', () => castSpell(spell));
       actionChildren.push(castBtn);
     }
@@ -148,7 +148,7 @@ function renderSpells() {
     removeBtn.addEventListener('click', () => { char.spells.splice(i, 1); save(); renderSpells(); });
     actionChildren.push(removeBtn);
 
-    const actionDiv = el('div', { style: 'display:flex;gap:3px;align-items:center;justify-content:flex-end' }, actionChildren);
+    const actionDiv = el('div', { className: 'spell-actions' }, actionChildren);
 
     list.appendChild(el('div', { className: 'spell-row' }, [
       prepCb, nameCombo, levelSelect, schoolSelect, concEl, dmgInput, actionDiv

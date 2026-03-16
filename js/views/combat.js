@@ -165,7 +165,7 @@ function renderClassResources() {
   char.classResources.forEach((r, ri) => {
     const max = getResourceMax(r);
     // Clamp current to max in case level changed
-    if (r.current > max) r.current = max;
+    if (r.current > max) { r.current = max; save(); }
 
     let usageEl;
     if (max > 10) {
