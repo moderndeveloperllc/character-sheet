@@ -139,31 +139,32 @@ function getCantripDiceCount(baseDice) {
 }
 
 function useSpellSlot(spell) {
-  if (spell.level < 1) return;
+  if (spell.level < 1) return false;
   var slot = char.spellSlots[spell.level];
   if (slot && slot.used < slot.max) {
     slot.used++;
     save();
     renderSpellSlots();
+    return true;
   }
+  return false;
 }
 
 function castSpell(spell) {
   useSpellSlot(spell);
-  addToLog({ label: (spell.name || 'Spell') + ' Cast', detail: spell.level > 0 ? 'Level ' + spell.level : 'Cantrip', total: '\u2714' });
+  addToLog({ label: (spell.name || 'Spell') + ' Cast', detail: spell.level > 0 ? 'Level ' + spell.level : 'Cantrip', total: '\u2714', damageType: '' });
 }
 
 var lastSpellSlotConsumed = false;
 
 function rollSpellAttack(spell) {
-  useSpellSlot(spell);
-  lastSpellSlotConsumed = spell.level >= 1;
+  lastSpellSlotConsumed = useSpellSlot(spell);
   rollCheck(getSpellAttack(), (spell.name || 'Spell') + ' Atk', { isAttack: true });
 }
 
 function rollSpellDamage(spell) {
   var diceExpr = spell.damage;
-  if (!diceExpr) return;
+  if (!diceExpr) { lastSpellSlotConsumed = false; return; }
   var saveTag = spell.save ? ' [' + spell.save.toUpperCase() + ' save]' : '';
   var label = (spell.name || 'Spell') + ' Dmg' + saveTag;
   var isCantrip = spell.level === 0;
@@ -178,7 +179,7 @@ function rollSpellDamage(spell) {
     var grandTotal = 0;
     for (var m = 0; m < missileCount; m++) {
       var mp = parseDiceExpr(diceExpr);
-      if (!mp) return;
+      if (!mp) { lastSpellSlotConsumed = false; return; }
       var rolls = rollDice(mp.count, mp.sides);
       var mTotal = rolls.reduce(function(a, b) { return a + b; }, 0) + mp.modifier;
       missileResults.push(mTotal);
@@ -197,7 +198,7 @@ function rollSpellDamage(spell) {
   }
 
   var parsed = parseDiceExpr(diceExpr);
-  if (!parsed) return;
+  if (!parsed) { lastSpellSlotConsumed = false; return; }
 
   var isCrit = lastAttackWasCrit;
   lastAttackWasCrit = false;

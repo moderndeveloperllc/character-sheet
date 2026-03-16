@@ -103,6 +103,7 @@ function showSpellInfo(btn, spell) {
 }
 
 function renderSpells() {
+  if (activeSpellInfo) { activeSpellInfo.remove(); activeSpellInfo = null; }
   const list = document.getElementById('spells-list');
   clearChildren(list);
   const spellOpts = getFilteredSpellOpts();

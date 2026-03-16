@@ -12,9 +12,9 @@ function setupHeaderCombos() {
     onChange: (val) => { char.charClass = val; save(); },
     onSelect: (val, o) => {
       char.charClass = o.label;
+      char.subclass = '';
       applyClassDefaults(val);
       const data = CLASS_DATA[val];
-      char.subclass = '';
       if (data && subclassCombo) {
         subclassCombo.setOptions(data.subclasses.map(s => ({ value: s, label: s })));
         subclassCombo.setValue('');
