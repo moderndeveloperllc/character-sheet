@@ -7,9 +7,11 @@ function getProfBonus() { return Math.ceil(char.level / 4) + 1; }
 
 function getSkillBonus(skill) {
   const mod = getMod(char.abilities[skill.ability]);
-  const prof = char.skillProficiencies[skill.key] ? getProfBonus() : 0;
-  const expertise = char.skillExpertise[skill.key] ? getProfBonus() : 0;
-  return mod + prof + expertise;
+  const profBonus = getProfBonus();
+  let prof = 0;
+  if (char.skillExpertise[skill.key]) prof = profBonus * 2;
+  else if (char.skillProficiencies[skill.key]) prof = profBonus;
+  return mod + prof;
 }
 
 function getSaveBonus(ability) {

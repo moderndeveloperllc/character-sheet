@@ -61,7 +61,7 @@ function createComboBox(config) {
   };
 
   const wrapper = el('div', { className: 'combo-wrapper ' + className });
-  const input = el('input', { type: 'text', className: 'combo-input', placeholder: placeholder || '', value: value || '' });
+  const input = el('input', { type: 'text', className: 'combo-input', name: config.name || '', placeholder: placeholder || '', value: value || '' });
   const arrow = el('span', { className: 'combo-arrow', textContent: '\u25be' });
   const dropdown = el('div', { className: 'combo-dropdown' });
 

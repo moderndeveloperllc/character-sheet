@@ -29,7 +29,7 @@
       <input type="text" id="char-subclass" placeholder="Subclass" data-field="subclass">
     </div>
     <div class="header-field">
-      <label>Level</label>
+      <label for="char-level">Level</label>
       <div class="level-control">
         <button class="level-btn" id="level-down">&minus;</button>
         <input type="number" id="char-level" min="1" max="20" value="1">
@@ -108,17 +108,17 @@
 
       <div class="combat-grid">
         <div class="combat-stat">
-          <label>AC</label>
+          <label for="combat-ac">AC</label>
           <input type="number" id="combat-ac" data-field="ac">
           <button class="btn btn-small" id="ac-auto" style="margin-top:4px;font-size:0.55rem;">Auto</button>
         </div>
         <div class="combat-stat">
-          <label>Initiative</label>
+          <label for="combat-init">Initiative</label>
           <input type="number" id="combat-init" data-field="initiative">
           <button class="btn btn-small" id="init-auto" style="margin-top:4px;font-size:0.55rem;">Auto</button>
         </div>
         <div class="combat-stat">
-          <label>Speed</label>
+          <label for="combat-speed">Speed</label>
           <input type="number" id="combat-speed" data-field="speed">
         </div>
       </div>
@@ -137,7 +137,7 @@
           </div>
         </div>
         <div class="temp-hp-row">
-          <span>Temp HP</span>
+          <label for="temp-hp">Temp HP</label>
           <input type="number" id="temp-hp" min="0" value="0">
         </div>
         <div id="resistance-indicator" class="condition-indicator resist" style="display:none;margin-top:6px;"></div>
@@ -197,13 +197,13 @@
         <button class="feature-tab" data-tab="feats">Feats</button>
       </div>
       <div class="feature-content active" data-content="racial">
-        <textarea class="feature-textarea" data-field="racialTraits" placeholder="Racial traits and abilities..."></textarea>
+        <textarea class="feature-textarea" name="racialTraits" data-field="racialTraits" placeholder="Racial traits and abilities..."></textarea>
       </div>
       <div class="feature-content" data-content="class">
-        <textarea class="feature-textarea" data-field="classFeatures" placeholder="Class features and abilities..."></textarea>
+        <textarea class="feature-textarea" name="classFeatures" data-field="classFeatures" placeholder="Class features and abilities..."></textarea>
       </div>
       <div class="feature-content" data-content="feats">
-        <textarea class="feature-textarea" data-field="feats" placeholder="Feats and special abilities..."></textarea>
+        <textarea class="feature-textarea" name="feats" data-field="feats" placeholder="Feats and special abilities..."></textarea>
       </div>
     </section>
 
@@ -217,7 +217,7 @@
       </div>
       <div class="spell-header-row">
         <div class="spell-stat">
-          <label>Ability</label>
+          <label for="spell-ability">Ability</label>
           <select id="spell-ability">
             <option value="int">INT</option>
             <option value="wis">WIS</option>
@@ -240,8 +240,7 @@
         <span>Lvl</span>
         <span>School</span>
         <span title="Concentration">C</span>
-        <span></span>
-        <span>Notes</span>
+        <span>Dmg</span>
         <span></span>
       </div>
       <div id="spells-list"></div>
@@ -272,31 +271,31 @@
       <div class="panel-header">Character Details</div>
       <div class="details-grid">
         <div class="detail-field">
-          <label>Personality Traits</label>
-          <textarea data-field="personalityTraits" placeholder="Personality traits..."></textarea>
+          <label for="personalityTraits">Personality Traits</label>
+          <textarea id="personalityTraits" name="personalityTraits" data-field="personalityTraits" placeholder="Personality traits..."></textarea>
         </div>
         <div class="detail-field">
-          <label>Ideals</label>
-          <textarea data-field="ideals" placeholder="Ideals..."></textarea>
+          <label for="ideals">Ideals</label>
+          <textarea id="ideals" name="ideals" data-field="ideals" placeholder="Ideals..."></textarea>
         </div>
         <div class="detail-field">
-          <label>Bonds</label>
-          <textarea data-field="bonds" placeholder="Bonds..."></textarea>
+          <label for="bonds">Bonds</label>
+          <textarea id="bonds" name="bonds" data-field="bonds" placeholder="Bonds..."></textarea>
         </div>
         <div class="detail-field">
-          <label>Flaws</label>
-          <textarea data-field="flaws" placeholder="Flaws..."></textarea>
+          <label for="flaws">Flaws</label>
+          <textarea id="flaws" name="flaws" data-field="flaws" placeholder="Flaws..."></textarea>
         </div>
         <div class="detail-field full-width">
-          <label>Appearance</label>
-          <textarea data-field="appearance" placeholder="Physical appearance..."></textarea>
+          <label for="appearance">Appearance</label>
+          <textarea id="appearance" name="appearance" data-field="appearance" placeholder="Physical appearance..."></textarea>
         </div>
         <div class="detail-field full-width">
           <button class="backstory-toggle" id="backstory-toggle">
             <span class="arrow">&#9654;</span> Backstory
           </button>
           <div class="backstory-wrapper" id="backstory-wrapper">
-            <textarea data-field="backstory" placeholder="Character backstory..." style="min-height:120px;"></textarea>
+            <textarea name="backstory" data-field="backstory" placeholder="Character backstory..." style="min-height:120px;"></textarea>
           </div>
         </div>
       </div>

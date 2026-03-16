@@ -100,7 +100,7 @@ function setupEvents() {
   // Spellcasting
   document.getElementById('spell-ability').addEventListener('change', (e) => { char.spellcastingAbility = e.target.value; save(); updateCalculated(); });
   document.getElementById('add-spell').addEventListener('click', () => {
-    char.spells.push({ name: '', level: 0, school: '', prepared: false, concentration: false, notes: '' });
+    char.spells.push({ name: '', level: 0, school: '', prepared: false, concentration: false, damage: '', damageType: '', attack: '', save: '', missiles: 0 });
     save(); renderSpells();
   });
 

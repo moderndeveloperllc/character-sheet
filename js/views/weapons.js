@@ -16,7 +16,7 @@ function renderWeapons() {
     const nameCombo = createComboBox({
       options: weaponOpts,
       value: w.name,
-      placeholder: 'Weapon name',
+      placeholder: 'Weapon name', name: 'weapon-name-' + i,
       groupBy: (o) => o.data.category,
       onChange: (val) => { w.name = val; save(); },
       onSelect: (val, o) => {
@@ -30,6 +30,7 @@ function renderWeapons() {
     });
 
     const abilSelect = document.createElement('select');
+    abilSelect.name = 'weapon-ability-' + i;
     abilSelect.style.cssText = 'font-size:0.8rem';
     ['str', 'dex', 'finesse'].forEach(a => {
       const opt = document.createElement('option');
@@ -43,20 +44,20 @@ function renderWeapons() {
     const condDmg = getConditionDamageBonus(w);
     let atkEl;
     if (w.manualOverride) {
-      atkEl = el('input', { type: 'text', value: w.attackBonus, placeholder: '+0', style: 'text-align:center' });
+      atkEl = el('input', { type: 'text', name: 'weapon-atk-' + i, value: w.attackBonus, placeholder: '+0', style: 'text-align:center' });
       atkEl.addEventListener('change', () => { w.attackBonus = atkEl.value; save(); });
     } else {
       atkEl = el('span', { className: 'auto-calculated', style: 'text-align:center;display:block;padding:4px', textContent: formatMod(atkBonus) });
     }
 
-    const dmgInput = el('input', { type: 'text', value: w.damageDice, placeholder: '1d8' });
+    const dmgInput = el('input', { type: 'text', name: 'weapon-dmg-' + i, value: w.damageDice, placeholder: '1d8' });
     dmgInput.addEventListener('change', () => { w.damageDice = dmgInput.value; save(); });
 
     const dmgMod = getWeaponDamageModifier(w);
     const totalDmgMod = dmgMod + condDmg.flat;
     let modEl;
     if (w.manualOverride) {
-      modEl = el('input', { type: 'text', value: w.damageModifier, placeholder: '+0', style: 'text-align:center' });
+      modEl = el('input', { type: 'text', name: 'weapon-mod-' + i, value: w.damageModifier, placeholder: '+0', style: 'text-align:center' });
       modEl.addEventListener('change', () => { w.damageModifier = modEl.value; save(); });
     } else {
       let modText = formatMod(totalDmgMod);
@@ -67,6 +68,7 @@ function renderWeapons() {
     }
 
     const typeSelect = document.createElement('select');
+    typeSelect.name = 'weapon-type-' + i;
     DAMAGE_TYPES.forEach(t => {
       const opt = document.createElement('option');
       opt.value = t; opt.textContent = t;
@@ -75,7 +77,7 @@ function renderWeapons() {
     });
     typeSelect.addEventListener('change', () => { w.damageType = typeSelect.value; save(); });
 
-    const manualCb = el('input', { type: 'checkbox', className: 'custom-check expertise-check', title: 'Manual override' });
+    const manualCb = el('input', { type: 'checkbox', className: 'custom-check expertise-check', name: 'weapon-manual-' + i, title: 'Manual override' });
     manualCb.checked = w.manualOverride;
     manualCb.addEventListener('change', () => { w.manualOverride = manualCb.checked; save(); renderWeapons(); });
 
