@@ -65,7 +65,45 @@ function getFilteredSpellOpts() {
   });
 }
 
+function getSpellSummary(spell) {
+  var parts = [];
+  parts.push(spell.level === 0 ? 'Cantrip' : 'Level ' + spell.level);
+  if (spell.school) parts.push(spell.school);
+  if (spell.concentration) parts.push('Concentration');
+  if (spell.attack) parts.push(spell.attack.charAt(0).toUpperCase() + spell.attack.slice(1) + ' spell attack');
+  if (spell.save) parts.push(spell.save.toUpperCase() + ' save');
+  if (spell.damage) {
+    var dmgStr = spell.damage;
+    if (spell.damageType) dmgStr += ' ' + spell.damageType.toLowerCase();
+    parts.push(dmgStr + ' damage');
+  }
+  if (spell.missiles) parts.push(spell.missiles + ' missiles');
+  // Look up classes from SRD data
+  var srdKey = Object.keys(SPELL_DATA).find(function(k) { return SPELL_DATA[k].name === spell.name; });
+  if (srdKey && SPELL_DATA[srdKey].classes) {
+    parts.push(SPELL_DATA[srdKey].classes.map(function(c) { return c.charAt(0).toUpperCase() + c.slice(1); }).join(', '));
+  }
+  return parts.join(' \u2022 ');
+}
+
+var activeSpellInfo = null;
+
+function showSpellInfo(btn, spell) {
+  // Dismiss if clicking same button
+  if (activeSpellInfo) { activeSpellInfo.remove(); activeSpellInfo = null; if (btn._infoOpen) { btn._infoOpen = false; return; } }
+  var popup = el('div', { className: 'spell-info-popup' }, [
+    el('div', { className: 'spell-info-text', textContent: getSpellSummary(spell) })
+  ]);
+  btn.parentNode.appendChild(popup);
+  activeSpellInfo = popup;
+  btn._infoOpen = true;
+  // Dismiss on click outside
+  function dismiss(e) { if (!popup.contains(e.target) && e.target !== btn) { popup.remove(); activeSpellInfo = null; btn._infoOpen = false; document.removeEventListener('click', dismiss, true); } }
+  setTimeout(function() { document.addEventListener('click', dismiss, true); }, 0);
+}
+
 function renderSpells() {
+  if (activeSpellInfo) { activeSpellInfo.remove(); activeSpellInfo = null; }
   const list = document.getElementById('spells-list');
   clearChildren(list);
   const spellOpts = getFilteredSpellOpts();
@@ -95,6 +133,10 @@ function renderSpells() {
         save(); renderSpells();
       },
     });
+
+    const infoBtn = el('button', { className: 'spell-info-btn', textContent: '\u2139', title: 'Spell info' });
+    infoBtn.addEventListener('click', (e) => { e.stopPropagation(); showSpellInfo(infoBtn, spell); });
+    const nameCell = el('div', { className: 'spell-name-cell' }, [nameCombo, infoBtn]);
 
     const levelSelect = document.createElement('select');
     levelSelect.name = 'spell-level-' + i;
@@ -151,7 +193,7 @@ function renderSpells() {
     const actionDiv = el('div', { className: 'spell-actions' }, actionChildren);
 
     list.appendChild(el('div', { className: 'spell-row' }, [
-      prepCb, nameCombo, levelSelect, schoolSelect, concEl, dmgInput, actionDiv
+      prepCb, nameCell, levelSelect, schoolSelect, concEl, dmgInput, actionDiv
     ]));
   });
 }
