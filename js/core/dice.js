@@ -107,6 +107,27 @@ function rollWeaponDamage(weapon, label, forceCrit) {
   return total;
 }
 
+var DAMAGE_TYPE_COLORS = {
+  'Acid': '#68d468',
+  'Cold': '#6ec4e8',
+  'Fire': '#e87040',
+  'Lightning': '#b898ff',
+  'Necrotic': '#a8a8a8',
+  'Poison': '#58c058',
+  'Psychic': '#e070c0',
+  'Radiant': '#f0d860',
+  'Thunder': '#80b0e0',
+  'Bludgeoning': null,
+  'Piercing': null,
+  'Slashing': null,
+  'Force': null
+};
+
+function getDamageTypeColor(damageType) {
+  if (!damageType) return null;
+  return DAMAGE_TYPE_COLORS[damageType] || null;
+}
+
 function getCantripDiceCount(baseDice) {
   var parsed = parseDiceExpr(baseDice);
   if (!parsed) return baseDice;
@@ -135,7 +156,8 @@ function rollSpellAttack(spell) {
 function rollSpellDamage(spell) {
   var diceExpr = spell.damage;
   if (!diceExpr) return;
-  var label = (spell.name || 'Spell') + ' Dmg';
+  var saveTag = spell.save ? ' [' + spell.save.toUpperCase() + ' save]' : '';
+  var label = (spell.name || 'Spell') + ' Dmg' + saveTag;
   var isCantrip = spell.level === 0;
 
   // Cantrip scaling
@@ -157,7 +179,8 @@ function rollSpellDamage(spell) {
     addToLog({
       label: label,
       detail: missileCount + ' missiles: ' + missileResults.join(' + ') + ' (' + diceExpr + ' each)',
-      total: grandTotal
+      total: grandTotal,
+      damageType: spell.damageType || ''
     });
     // Consume slot for non-cantrip if not already consumed via ATK
     if (!isCantrip && !spell.attack) useSpellSlot(spell);
@@ -194,7 +217,7 @@ function rollSpellDamage(spell) {
   if (spell.damageType) detail += ' ' + spell.damageType.toLowerCase();
 
   var critLabel = isCrit ? ' (CRIT)' : '';
-  addToLog({ label: label + critLabel, detail: detail, total: total, isCrit: isCrit });
+  addToLog({ label: label + critLabel, detail: detail, total: total, isCrit: isCrit, damageType: spell.damageType || '' });
 
   // Consume slot for save-based spells (no attack roll)
   if (!isCantrip && !spell.attack) useSpellSlot(spell);
@@ -228,8 +251,17 @@ function showLastResult(entry) {
   const node = document.getElementById('last-roll-result');
   node.textContent = entry.total;
   node.className = 'last-roll-result';
+  node.style.color = '';
+  node.style.textShadow = '';
   if (entry.isCrit) node.classList.add('crit');
-  if (entry.isFumble) node.classList.add('fumble');
+  else if (entry.isFumble) node.classList.add('fumble');
+  else {
+    var dmgColor = entry.damageType ? getDamageTypeColor(entry.damageType) : null;
+    if (dmgColor) {
+      node.style.color = dmgColor;
+      node.style.textShadow = '0 0 8px ' + dmgColor + '66';
+    }
+  }
   node.style.animation = 'none';
   void node.offsetHeight;
   node.style.animation = '';
@@ -270,8 +302,14 @@ function showRollOverlay(entry) {
     duration = 2000;
   } else {
     overlayType = 'normal-overlay';
-    subtitle.textContent = '';
+    subtitle.textContent = entry.damageType || '';
     duration = 900;
+    // Apply damage type color to the result number
+    var dmgColor = entry.damageType ? getDamageTypeColor(entry.damageType) : null;
+    if (dmgColor) {
+      result.style.color = dmgColor;
+      result.style.textShadow = '0 0 30px ' + dmgColor + 'cc, 0 0 60px ' + dmgColor + '66, 0 2px 4px rgba(0,0,0,0.5)';
+    }
   }
 
   // Step 3: Force reflow, then activate on next frame so animations trigger fresh

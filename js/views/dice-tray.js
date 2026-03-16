@@ -6,10 +6,16 @@ function renderRollLog() {
   clearChildren(log);
   rollHistory.forEach(entry => {
     const totalClass = 'roll-total' + (entry.isCrit ? ' crit' : '') + (entry.isFumble ? ' fumble' : '');
+    const totalEl = el('span', { className: totalClass, textContent: String(entry.total) });
+    const dmgColor = entry.damageType ? getDamageTypeColor(entry.damageType) : null;
+    if (dmgColor && !entry.isCrit && !entry.isFumble) {
+      totalEl.style.color = dmgColor;
+      totalEl.style.textShadow = '0 0 8px ' + dmgColor + '66';
+    }
     log.appendChild(el('div', { className: 'roll-entry' }, [
       el('span', { className: 'roll-label', textContent: String(entry.label) }),
       el('span', { className: 'roll-detail', textContent: String(entry.detail) }),
-      el('span', { className: totalClass, textContent: String(entry.total) }),
+      totalEl,
     ]));
   });
 }
