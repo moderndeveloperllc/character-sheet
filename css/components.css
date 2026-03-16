@@ -820,7 +820,8 @@ select option {
   gap: 2px;
 }
 
-.spell-stat label {
+.spell-stat label,
+.spell-stat-label {
   font-family: var(--font-display);
   font-size: 0.5rem;
   letter-spacing: 0.12em;
@@ -962,6 +963,56 @@ select option {
   font-size: 0.8rem;
   padding: 3px 5px;
   transition: border-color 0.2s;
+}
+
+.spell-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  position: relative;
+}
+
+.spell-name-cell .combo-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.spell-info-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.spell-info-btn:hover {
+  color: var(--gold);
+}
+
+.spell-info-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-panel);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--panel-radius);
+  padding: 8px 10px;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.spell-info-text {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text);
+  line-height: 1.5;
 }
 
 .spell-row input:focus,
